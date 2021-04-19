@@ -1,0 +1,30 @@
+/* SQL- Customer and Sales Info */
+
+/* Task 1 */
+SELECT salesrep.repfirstname, salesrep.replastname, customer.contactfirstname, customer.contactlastname 
+FROM salesrep INNER JOIN customer ON salesrep.repid = customer.salesrepemployeenumber 
+GROUP BY salesrep.repfirstname,salesrep.replastname, customer.contactfirstname, customer.contactlastname 
+HAVING LEFT(salesrep.repfirstname, 1) = LEFT(customer.contactfirstname, 1);
+
+/* Task 2 */
+SELECT salesrep.repfirstname, salesrep.replastname, string_agg(DISTINCT(customer.city::text), ',') AS Cities 
+FROM customer INNER JOIN salesrep ON salesrep.repid = customer.salesrepemployeenumber 
+GROUP BY salesrep.repfirstname, salesrep.replastname;
+
+/* Task 3 */
+SELECT salesrep.repfirstname, salesrep.replastname, count(customer.salesrepemployeenumber) AS num_customer 
+FROM customer INNER JOIN salesrep ON salesrep.repid = customer.salesrepemployeenumber  
+WHERE customer.country = 'USA' 
+GROUP BY salesrep.repfirstname, salesrep.replastname 
+ORDER BY num_customer DESC LIMIT 3;
+
+/* Task 4 */
+(SELECT count(customernumber) AS num_customer, city 
+FROM customer 
+WHERE country = 'USA' 
+GROUP BY city 
+ORDER BY num_customer DESC limit 3) 
+union all (SELECT count(customernumber) AS num_customer, city 
+	   FROM customer WHERE country = 'USA' 
+	   GROUP BY city 
+	   ORDER BY num_customer ASC limit 3);
